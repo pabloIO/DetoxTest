@@ -1,11 +1,34 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+
+const data = [
+  {
+    id: 0,
+    title: 'one',
+  },
+  {
+    id: 1,
+    title: 'two',
+  },
+  {
+    id: 2,
+    title: 'three',
+  },
+  {
+    id: 3,
+    title: 'four',
+  },
+  {
+    id: 4,
+    title: 'five',
+  },
+];
 
 export default function HomeScreen() {
   return (
@@ -84,6 +107,21 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
+        <TouchableOpacity
+          testID="parentView"
+          onPress={() => alert('List View')}
+          style={{ padding: 20 }}
+        >
+          {data.map((e) => (
+            <Text
+              accessibilityLabel="listItem"
+              onPress={() => alert(`alert text ${e.title}`)}
+              key={e.id}
+            >
+              {e.title}
+            </Text>
+          ))}
+        </TouchableOpacity>
       </ThemedView>
     </ParallaxScrollView>
   );
