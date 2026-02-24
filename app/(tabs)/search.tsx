@@ -159,14 +159,16 @@ const FilterList = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <TextInput
-        testID="searchNames"
-        value={search}
-        onChangeText={(text) => setSearch(text)}
-        placeholder="Search users name"
-        style={{ padding: 16 }}
-      />
       <FlatList
+        ListHeaderComponent={
+          <TextInput
+            testID="searchNames"
+            value={search}
+            onChangeText={(text) => setSearch(text)}
+            placeholder="Search users name"
+            style={{ padding: 16 }}
+          />
+        }
         testID="searchNamesList"
         data={filteredResults}
         keyExtractor={(item: User) => item.id}

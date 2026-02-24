@@ -1,6 +1,3 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
 import { ExternalLink } from '@/components/external-link';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
@@ -8,8 +5,23 @@ import { ThemedView } from '@/components/themed-view';
 import { Collapsible } from '@/components/ui/collapsible';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
+import { Image } from 'expo-image';
+import { memo } from 'react';
+import { Platform, StyleSheet } from 'react-native';
 
-export default function TabTwoScreen() {
+const AnimationsFootnote = Platform.select({
+  ios: (
+    <ThemedText>
+      The{' '}
+      <ThemedText type="defaultSemiBold">
+        components/ParallaxScrollView.tsx
+      </ThemedText>{' '}
+      component provides a parallax effect for the header image.
+    </ThemedText>
+  ),
+});
+
+export default memo(function TabTwoScreen() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
@@ -23,12 +35,7 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}
-        >
+        <ThemedText type="title" style={styles.title}>
           Explore
         </ThemedText>
       </ThemedView>
@@ -67,7 +74,9 @@ export default function TabTwoScreen() {
         </ThemedText>
         <Image
           source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
+          style={styles.reactImage}
+          contentFit="contain"
+          cachePolicy="memory-disk"
         />
         <ExternalLink href="https://reactnative.dev/docs/images">
           <ThemedText type="link">Learn more</ThemedText>
@@ -94,26 +103,16 @@ export default function TabTwoScreen() {
             components/HelloWave.tsx
           </ThemedText>{' '}
           component uses the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
+          <ThemedText type="defaultSemiBold" style={styles.monoText}>
             react-native-reanimated
           </ThemedText>{' '}
           library to create a waving hand animation.
         </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The{' '}
-              <ThemedText type="defaultSemiBold">
-                components/ParallaxScrollView.tsx
-              </ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
+        {AnimationsFootnote}
       </Collapsible>
     </ParallaxScrollView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   headerImage: {
@@ -126,4 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  title: { fontFamily: Fonts.rounded },
+  monoText: { fontFamily: Fonts.mono },
+  reactImage: { width: 100, height: 100, alignSelf: 'center' },
 });
