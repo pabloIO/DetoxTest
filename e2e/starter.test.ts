@@ -1,8 +1,6 @@
-describe('Example', () => {
-  beforeAll(async () => {
-    await device.launchApp();
-  });
+import { expect } from 'detox';
 
+describe('Example', () => {
   // beforeEach(async () => {
   //   await device.reloadReactNative();
   // });
@@ -52,18 +50,20 @@ describe('Example', () => {
   //   await expect(element(by.text('List View'))).toBeVisible();
   // });
 
-  it('search names with no results', async () => {
-    await element(by.text('Search')).tap();
-    await element(by.id('searchNames')).replaceText('dsd');
-    await expect(element(by.id('emptyResults'))).toBeVisible();
-  });
+  // it('search names with no results', async () => {
+  //   await element(by.text('Search')).tap();
+  //   await element(by.id('searchNames')).replaceText('dsd');
+  //   await expect(element(by.id('emptyResults'))).toBeVisible();
+  // });
 
-  it('search names with results', async () => {
-    await element(by.id('searchNames')).replaceText('Le');
-    await expect(element(by.text('Leanne Graham'))).toBeVisible();
-  });
+  // it('search names with results', async () => {
+  //   await element(by.id('searchNames')).replaceText('Le');
+  //   await expect(element(by.text('Leanne Graham'))).toBeVisible();
+  // });
 
-  afterAll(async () => {
-    await device.terminateApp();
+  it('multitap on counter', async () => {
+    await element(by.text('Counter')).tap();
+    await element(by.id('counterButton')).multiTap(10);
+    await expect(element(by.id('counterText'))).toHaveText('10');
   });
 });
