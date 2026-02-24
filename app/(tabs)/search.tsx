@@ -3,11 +3,13 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import type { SharedValue } from 'react-native-reanimated';
 import Animated, {
   interpolate,
   LinearTransition,
@@ -21,10 +23,11 @@ type User = {
   name: string;
   username: string;
   email: string;
-  deleteItem: (id: string) => void;
 };
 
-import type { SharedValue } from 'react-native-reanimated';
+type UserListItemProps = User & {
+  onDelete: (id: string) => void;
+};
 
 type RightActionsProps = {
   progress: SharedValue<number>;
@@ -33,7 +36,24 @@ type RightActionsProps = {
   id: string;
 };
 
+type SearchHeaderProps = {
+  search: string;
+  onChangeText: (text: string) => void;
+};
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const SearchHeader = memo(({ search, onChangeText }: SearchHeaderProps) => {
+  return (
+    <TextInput
+      testID="searchNames"
+      value={search}
+      onChangeText={onChangeText}
+      placeholder="Search users name"
+      style={styles.searchInput}
+    />
+  );
+});
 
 const RightSwipeActions = ({
   progress,
@@ -53,55 +73,43 @@ const RightSwipeActions = ({
     <AnimatedPressable
       onPress={onDelete}
       testID={`delete-user-${id}`}
-      style={[
-        {
-          width: 100,
-          backgroundColor: 'red',
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderBottomColor: 'gray',
-          borderWidth: 1,
-          borderTopColor: 'gray',
-        },
-        animatedStyle,
-      ]}
+      style={[styles.deleteButton, animatedStyle]}
     >
-      <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete</Text>
+      <Text style={styles.deleteText}>Delete</Text>
     </AnimatedPressable>
   );
 };
 
-const UserListItem = memo(({ name, username, id, deleteItem }: User) => {
-  return (
-    <Animated.View
-      layout={LinearTransition.springify()}
-      exiting={SlideOutRight.springify()}
-    >
-      <Swipeable
-        renderRightActions={(progress, translation) => (
-          <RightSwipeActions
-            onDelete={() => deleteItem(id)}
-            progress={progress}
-            translation={translation}
-            id={name}
-          />
-        )}
+const UserListItem = memo(
+  ({ name, username, id, onDelete }: UserListItemProps) => {
+    const handleDelete = useCallback(() => onDelete(id), [onDelete, id]);
+
+    return (
+      <Animated.View
+        layout={LinearTransition.springify()}
+        exiting={SlideOutRight.springify()}
       >
-        <View
-          style={{
-            padding: 16,
-            borderBottomWidth: 1,
-            borderBottomColor: '#ccc',
-            backgroundColor: 'white',
-          }}
+        <Swipeable
+          renderRightActions={(progress, translation) => (
+            <RightSwipeActions
+              onDelete={() => handleDelete()}
+              progress={progress}
+              translation={translation}
+              id={name}
+            />
+          )}
         >
-          <Text>{name}</Text>
-          <Text>{username}</Text>
-        </View>
-      </Swipeable>
-    </Animated.View>
-  );
-});
+          <View style={styles.itemContainer}>
+            <Text>{name}</Text>
+            <Text>{username}</Text>
+          </View>
+        </Swipeable>
+      </Animated.View>
+    );
+  },
+);
+
+const keyExtractor = (item: User) => item.id;
 
 const FilterList = () => {
   const [data, setData] = useState<User[]>([]);
@@ -143,9 +151,14 @@ const FilterList = () => {
     });
   }, [data, search]);
 
-  const renderItem = useCallback(({ item }: { item: User }) => {
-    return <UserListItem {...item} deleteItem={deleteItem} />;
-  }, []);
+  const renderItem = useCallback(
+    ({ item }: { item: User }) => {
+      return <UserListItem {...item} onDelete={deleteItem} />;
+    },
+    [deleteItem],
+  );
+
+  const handleChangeText = useCallback((text: string) => setSearch(text), []);
 
   if (apiState === 'loading') {
     return <ActivityIndicator />;
@@ -158,20 +171,14 @@ const FilterList = () => {
   if (apiState !== 'success') return null;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <FlatList
         ListHeaderComponent={
-          <TextInput
-            testID="searchNames"
-            value={search}
-            onChangeText={(text) => setSearch(text)}
-            placeholder="Search users name"
-            style={{ padding: 16 }}
-          />
+          <SearchHeader search={search} onChangeText={handleChangeText} />
         }
         testID="searchNamesList"
         data={filteredResults}
-        keyExtractor={(item: User) => item.id}
+        keyExtractor={keyExtractor}
         renderItem={renderItem}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
@@ -182,5 +189,26 @@ const FilterList = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  deleteButton: {
+    width: 100,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomColor: 'gray',
+    borderWidth: 1,
+    borderTopColor: 'gray',
+  },
+  deleteText: { color: 'white', fontWeight: 'bold' },
+  itemContainer: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    backgroundColor: 'white',
+  },
+  safeArea: { backgroundColor: '#fff', flex: 1 },
+  searchInput: { padding: 16 },
+});
 
 export default FilterList;
