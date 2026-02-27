@@ -1,34 +1,38 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useAuthStore } from '@/store/auth-store';
+import { config } from '@/tamagui.config';
+import { SplashScreen, Stack } from 'expo-router';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { TamaguiProvider } from 'tamagui';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { isLoading, isAuthenticated, loadSession } = useAuthStore();
+
+  useEffect(() => {
+    loadSession();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hideAsync(); // hide splash once session is resolved
+    }
+  }, [isLoading]);
+
+  if (isLoading) return null;
 
   return (
-    <GestureHandlerRootView>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: 'modal', title: 'Modal' }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <TamaguiProvider config={config} defaultTheme="light">
+      <Stack>
+        <Stack.Protected guard={!!isAuthenticated}>
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack.Protected>
+      </Stack>
+    </TamaguiProvider>
   );
 }
