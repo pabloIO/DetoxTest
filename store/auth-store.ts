@@ -1,14 +1,9 @@
 // store/auth-store.ts
+import { User } from '@/models/User';
 import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
 
 const SESSION_KEY = 'user_session';
-
-type User = {
-  id: string;
-  email: string;
-  token: string;
-};
 
 type AuthState = {
   // state

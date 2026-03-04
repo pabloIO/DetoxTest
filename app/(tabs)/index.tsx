@@ -5,6 +5,7 @@ import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { authRepository } from '@/repositories/auth-repository';
 import { useAuthStore } from '@/store/auth-store';
 import { Button } from 'tamagui';
 
@@ -33,6 +34,11 @@ const data = [
 
 export default function HomeScreen() {
   const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    authRepository.logout();
+  };
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -49,7 +55,7 @@ export default function HomeScreen() {
         </ThemedText>
         <HelloWave />
       </ThemedView>
-      <Button testID="logout-button" onPress={() => logout()}>
+      <Button testID="logout-button" onPress={handleLogout}>
         Log out
       </Button>
       <ThemedView style={styles.stepContainer}>

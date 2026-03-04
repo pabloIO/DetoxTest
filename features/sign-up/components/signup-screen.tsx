@@ -4,15 +4,19 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Button, H1, Input, Spinner, Text, XStack, YStack } from 'tamagui';
-import { useLogin } from '../hooks/use-login';
-// import { useLogin } from '@/hooks/use-login';
+import { useRegister } from '../hooks/use-register';
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function SignUpScreen() {
+  const [userData, setUserData] = useState({
+    email: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
+  const { handleSignUp, error, isLoading } = useRegister();
 
-  const { handleLogin, isLoading, error } = useLogin();
+  const handleUserInput = (field: string, value: string) => {
+    setUserData({ ...userData, [field]: value });
+  };
 
   return (
     <YStack
@@ -24,8 +28,8 @@ export default function LoginScreen() {
     >
       {/* Header */}
       <YStack gap="$2" mb="$4">
-        <H1 testID="login-welcome">Welcome back</H1>
-        <Text color="$orange10">Sign in to your account</Text>
+        <H1 testID="login-welcome">Register</H1>
+        <Text color="$orange10">Create a new account</Text>
       </YStack>
 
       {/* Form */}
@@ -33,8 +37,8 @@ export default function LoginScreen() {
         <Input
           testID="email-input"
           placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
+          value={userData.email}
+          onChangeText={(value) => handleUserInput('email', value)}
           keyboardType="email-address"
           autoCapitalize="none"
           size="$4"
@@ -43,12 +47,12 @@ export default function LoginScreen() {
           <Input
             testID="password-input"
             placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
+            value={userData.password}
+            onChangeText={(value) => handleUserInput('password', value)}
             secureTextEntry={!showPassword}
             size="$4"
-            height={50}
             flex={1}
+            paddingEnd={50}
           />
           <TouchableOpacity
             testID="show-password-button"
@@ -73,21 +77,21 @@ export default function LoginScreen() {
 
       {/* Submit */}
       <Button
-        testID="login-button"
+        testID="register-button"
         size="$4"
-        onPress={() => handleLogin(email, password)}
+        onPress={() => handleSignUp(userData.email, userData.password)}
         disabled={isLoading}
         icon={isLoading ? <Spinner /> : undefined}
       >
-        {isLoading ? 'Signing in...' : 'Sign in'}
+        {isLoading ? 'Registering...' : 'Register'}
       </Button>
 
       {/* Footer */}
       <XStack justify="center" gap="$2">
-        <Text>Don't have an account?</Text>
-        <Link href="/sign-up" asChild>
+        <Text>Already have an account?</Text>
+        <Link href="/login" asChild>
           <Text color="$blue10" fontWeight="bold">
-            Register
+            Sign in
           </Text>
         </Link>
       </XStack>
