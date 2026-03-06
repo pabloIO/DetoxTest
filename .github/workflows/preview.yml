@@ -24,6 +24,7 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+          packager: npm # ✅ tell it to use npm instead of yarn
 
       - name: Build preview
         run: eas build --profile preview --platform all --non-interactive
