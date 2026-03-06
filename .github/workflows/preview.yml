@@ -1,0 +1,32 @@
+# runs on merge to develop — creates internal preview build
+name: Preview Build
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build preview
+        run: eas build --profile preview --platform all --non-interactive
+
+      - name: Publish EAS Update
+        run: eas update --branch develop --message "Preview ${{ github.sha }}"
