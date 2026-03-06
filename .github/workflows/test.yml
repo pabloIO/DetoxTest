@@ -46,9 +46,9 @@ jobs:
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Build for Detox
-        run: npx detox build --configuration ios.sim.release
+        run: npx detox build --configuration ios.sim.debug
 
       - name: Run Detox tests
-        run: npx detox test --configuration ios.sim.release
+        run: npx detox test --configuration ios.sim.debug
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

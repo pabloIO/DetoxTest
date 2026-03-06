@@ -91,6 +91,13 @@ export default function LoginScreen() {
           </Text>
         </Link>
       </XStack>
+
+      <XStack justify="center" gap="$2">
+        <Text>Test text</Text>
+        <Text color="$blue10" fontWeight="bold">
+          Register
+        </Text>
+      </XStack>
     </YStack>
   );
 }
