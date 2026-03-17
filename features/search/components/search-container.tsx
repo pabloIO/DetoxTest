@@ -40,6 +40,42 @@ const SearchContainer = () => {
     fetchData();
   }, [fetchData]);
 
+  // DEBOUNCER
+  function useDebounce<T>(value: T, delay: number = 300): T {
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => clearTimeout(timer); // cleanup on every new value
+    }, [value, delay]);
+
+    return debouncedValue;
+  }
+
+  const debouncedSearch = useDebounce(search, 300);
+
+  // IF THE SEARCH USES AN API CALL
+  // useEffect(() => {
+  //   if (!debouncedSearch.trim()) return;
+
+  //   let cancelled = false; // prevent race conditions
+
+  //   const fetchResults = async () => {
+  //     try {
+  //       const results = await searchAPI(debouncedSearch);
+  //       if (!cancelled) setData(results);
+  //     } catch (error) {
+  //       if (!cancelled) setError(error);
+  //     }
+  //   };
+
+  //   fetchResults();
+  //   return () => { cancelled = true; };
+  // }, [debouncedSearch]);
+
   const filteredResults = useMemo(() => {
     const normalizedQuery = search.trim().toLowerCase();
     if (normalizedQuery === '') return data;
@@ -78,6 +114,12 @@ const SearchContainer = () => {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         ListEmptyComponent={<Text testID="emptyResults">No users found</Text>}
+
+        // FOR FLATLIST OPTIMIZATION
+        // initialNumToRender={10}
+        // maxToRenderPerBatch={10}
+        // windowSize={5}
+        // removeClippedSubviews={true}
       />
     </SafeAreaView>
   );

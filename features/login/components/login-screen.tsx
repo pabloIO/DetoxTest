@@ -1,11 +1,11 @@
 // app/(auth)/login.tsx
 import AntDesign from '@expo/vector-icons/AntDesign';
+import * as Sentry from '@sentry/react-native';
 import { Link } from 'expo-router';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Button, H1, Input, Spinner, Text, XStack, YStack } from 'tamagui';
 import { useLogin } from '../hooks/use-login';
-// import { useLogin } from '@/hooks/use-login';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -93,10 +93,13 @@ export default function LoginScreen() {
       </XStack>
 
       <XStack justify="center" gap="$2">
-        <Text>Test text</Text>
-        <Text color="$blue10" fontWeight="bold">
-          Register
-        </Text>
+        <Button
+          onPress={() => {
+            Sentry.captureException(new Error('First error'));
+          }}
+        >
+          Try Sentry
+        </Button>
       </XStack>
     </YStack>
   );

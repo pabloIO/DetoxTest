@@ -6,30 +6,41 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "environment": "development"
     },
     "preview": {
-      "distribution": "internal",
-      "credentialsSource": "remote",
-      "android": {
-        "buildType": "apk"
-      }
-    },
-    "staging": {
-      // ✅ new profile for TestFlight
       "distribution": "store",
+      "environment": "preview",
       "ios": {
-        "buildConfiguration": "Release"
+        "buildConfiguration": "Release",
+        "credentialsSource": "remote"
       },
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "credentialsSource": "remote"
       }
     },
     "production": {
-      "autoIncrement": true
+      "distribution": "store",
+      "environment": "production",
+      "autoIncrement": true,
+      "ios": {
+        "credentialsSource": "remote"
+      },
+      "android": {
+        "credentialsSource": "remote"
+      }
     }
   },
   "submit": {
+    "preview": {
+      "ios": {
+        "appleId": "dany.huayhua.safer@gmail.com",
+        "ascAppId": "6760193678",
+        "groups": ["internal"]
+      }
+    },
     "production": {
       "ios": {
         "appleId": "dany.huayhua.safer@gmail.com",

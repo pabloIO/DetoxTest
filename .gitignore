@@ -10,6 +10,8 @@ web-build/
 expo-env.d.ts
 .env
 
+sentry.properties
+
 # Native
 .kotlin/
 *.orig.*
@@ -42,3 +44,5 @@ app-example
 # generated native folders
 /ios
 /android
+
+.env.local
