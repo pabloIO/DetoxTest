@@ -1,6 +1,5 @@
 // app/(auth)/login.tsx
 import AntDesign from '@expo/vector-icons/AntDesign';
-import * as Sentry from '@sentry/react-native';
 import { Link } from 'expo-router';
 import { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
@@ -90,16 +89,6 @@ export default function LoginScreen() {
             Register
           </Text>
         </Link>
-      </XStack>
-
-      <XStack justify="center" gap="$2">
-        <Button
-          onPress={() => {
-            Sentry.captureException(new Error('First error'));
-          }}
-        >
-          Try Sentry
-        </Button>
       </XStack>
     </YStack>
   );

@@ -11,6 +11,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "e2e/page-objects/SearchScreen.ts"
+    "e2e/page-objects/SearchScreen.ts",
+    "features/girls/components/girl-loading-skeleton.tsx"
   ]
 }
